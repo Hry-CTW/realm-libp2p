@@ -1,0 +1,12 @@
+*.dylib
+*.so
+*.dll
+*.bak*
+.libp2p_key
+*.log
+__pycache__/
+*.pyc
+libp2p_wrapper.h
+test/test_p2p
+test/test_stream
+test/test_stress
