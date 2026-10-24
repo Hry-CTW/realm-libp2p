@@ -296,6 +296,21 @@ C 接口一一对应 C++ 接口，函数名前缀 `p2p_c_`，需要传递 `p2p_h
 
 ---
 
+## 跨局域网 / 中继（realm-relay）
+
+当两端处于不同 NAT 后、直连不可达时，可用内置的独立中继节点 `cmd/realm-relay`
+（circuit v2 中继 + AutoNAT 服务）做跳板。
+
+- **编译**：`CGO_ENABLED=0 go build -o realm-relay ./cmd/realm-relay`（纯 Go，单文件零依赖）。
+- **运行**：`./realm-relay`（可选 `REALM_RELAY_PORT=4001` 改端口；身份持久化于 `realm-relay.key`）。
+- **shell 节点接入**：在 `shell_server` / `shell_client` 启动前设置环境变量
+  `REALM_RELAY=<中继完整 multiaddr，含 /p2p/<ID>>`，节点会启用静态 AutoRelay。
+- **控制端连接**：用「中继地址 /p2p-circuit/p2p/<被控端PeerID>」作为 `shell_client` 的参数。
+
+完整操作步骤、本地回环自测、防火墙与排错见 **`../realm-shell/CROSS_LAN.md`**。
+
+---
+
 ## 常见问题
 
 ### 1. `zsh: segmentation fault`（Python）
