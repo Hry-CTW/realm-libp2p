@@ -178,7 +178,6 @@ func libp2p_start(port C.int, key_path *C.char) unsafe.Pointer {
 
 	g_ctx, g_cancel = context.WithCancel(context.Background())
 
-<<<<<<< HEAD
 	// ★ 跨局域网（不同 NAT）支持：AutoRelay + NATService
 	//   - EnableNATService：本节点提供 AutoNAT 服务，供对端判定 NAT 类型。
 	//   - AutoRelay：NAT 后的节点自动经中继广播可达地址。
@@ -218,17 +217,6 @@ func libp2p_start(port C.int, key_path *C.char) unsafe.Pointer {
 			libp2p.EnableHolePunching(),
 			libp2p.NATPortMap(),
 		}, relayOpts...)...,
-=======
-	h, err := libp2p.New(
-		libp2p.Identity(priv),
-		libp2p.ListenAddrStrings(
-			fmt.Sprintf("/ip4/0.0.0.0/tcp/%d", port),
-			fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic-v1", port),
-		),
-		libp2p.EnableRelay(),
-		libp2p.EnableHolePunching(),
-		libp2p.NATPortMap(),
->>>>>>> 52a2c94487ab90d6644e68837c40771a0a01a2fd
 	)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[p2p] host 创建失败: %v\n", err)
@@ -432,12 +420,8 @@ func libp2p_send(ctx unsafe.Pointer, peer_id *C.char, data *C.char, length C.int
 	if err != nil {
 		return -2
 	}
-<<<<<<< HEAD
 	// ★ 允许在 Limited（中继）连接上开流
 	s, err := g_host.NewStream(network.WithAllowLimitedConn(g_ctx, "realm-msg-relay"), pid, "/realm/1.0.0")
-=======
-	s, err := g_host.NewStream(g_ctx, pid, "/realm/1.0.0")
->>>>>>> 52a2c94487ab90d6644e68837c40771a0a01a2fd
 	if err != nil {
 		return -3
 	}
@@ -458,12 +442,8 @@ func libp2p_broadcast(ctx unsafe.Pointer, data *C.char, length C.int) C.int {
 	payload := C.GoBytes(unsafe.Pointer(data), length)
 	peers := g_host.Network().Peers()
 	for _, pid := range peers {
-<<<<<<< HEAD
 		// ★ 允许在 Limited（中继）连接上开流
 		s, err := g_host.NewStream(network.WithAllowLimitedConn(g_ctx, "realm-msg-relay"), pid, "/realm/1.0.0")
-=======
-		s, err := g_host.NewStream(g_ctx, pid, "/realm/1.0.0")
->>>>>>> 52a2c94487ab90d6644e68837c40771a0a01a2fd
 		if err != nil {
 			continue
 		}
@@ -488,16 +468,11 @@ func libp2p_open_stream(ctx unsafe.Pointer, peer_id *C.char, proto *C.char) C.ul
 	if err != nil {
 		return 0
 	}
-<<<<<<< HEAD
 	// ★ 经中继建立的连接被标记为「Limited」，NewStream 默认拒绝在 Limited 连接上开流。
 	//   跨局域网走中继时 shell 流必经此路径，必须显式允许（对应 go-libp2p 的 WithAllowLimitedConn）。
 	s, err := g_host.NewStream(network.WithAllowLimitedConn(g_ctx, "realm-shell-relay"), pid, protocol.ID(C.GoString(proto)))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "[p2p][open_stream] NewStream 失败 peer=%s proto=%s err=%v\n", C.GoString(peer_id), C.GoString(proto), err)
-=======
-	s, err := g_host.NewStream(g_ctx, pid, protocol.ID(C.GoString(proto)))
-	if err != nil {
->>>>>>> 52a2c94487ab90d6644e68837c40771a0a01a2fd
 		return 0
 	}
 	return registerStream(s)
