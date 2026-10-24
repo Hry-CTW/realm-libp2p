@@ -7,9 +7,12 @@
 __pycache__/
 *.pyc
 libp2p_wrapper.h
+<<<<<<< HEAD
 /realm-relay
 /realm-relay.key
 /repro_relay
+=======
+>>>>>>> 52a2c94487ab90d6644e68837c40771a0a01a2fd
 test/test_p2p
 test/test_stream
 test/test_stress
